@@ -13,18 +13,18 @@
             <PatternLayout pattern="%-5p | %d{yyyy-MM-dd HH:mm:ss} | [%t] %C{2} (%F:%L) - %m%n" />
         </Console>
 	<!-- log4j2-elasticsearch -->
-	<ElasticSearch name="elasticsearchAsyncBatch">
+	<Elasticsearch name="ELASTICSEARCH">
 		<IndexName indexName="log4j2"/>
 		<AsyncBatchDelivery>
 			<JestHttp serverUris="http://akr-j28.nmfs.local:9200" />
 		</AsyncBatchDelivery>
-	</ElasticSearch>
+	</Elasticsearch>
     </Appenders>
     <Loggers>
         <Root level="debug">
             <AppenderRef ref="STDOUT" />
             <AppenderRef ref="FILE" />
-	    <AppenderRef ref="elasticsearchAsyncBatch" />
+	    <AppenderRef ref="ELASTICSEARCH" />
         </Root>
     </Loggers>
 </Configuration>

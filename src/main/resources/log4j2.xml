@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="trace" shutdownHook="disable" packages="org.appenders.log4j2.elasticsearch">
+<Configuration status="trace" packages="org.appenders.log4j2.elasticsearch">
     <Properties>
         <Property name="basePath">./logs</Property>
     </Properties>
@@ -50,7 +50,7 @@
 
 
     <Loggers>
-        <Root level="info">
+        <Root level="debug">
             <AppenderRef ref="STDOUT" />
             <AppenderRef ref="FILE" />
 	    <AppenderRef ref="elasticsearchAsyncBatch" />

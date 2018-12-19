@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration xmlns="http://logging.apache.org/log4j/2.0/config" shutdownHook="disable">
+<Configuration status="trace" shutdownHook="disable" packages="org.appenders.log4j2.elasticsearch">
     <Properties>
         <Property name="basePath">./logs</Property>
     </Properties>
@@ -12,19 +12,64 @@
         <Console name="STDOUT" target="SYSTEM_OUT">
             <PatternLayout pattern="%-5p | %d{yyyy-MM-dd HH:mm:ss} | [%t] %C{2} (%F:%L) - %m%n" />
         </Console>
+
 	<!-- log4j2-elasticsearch -->
-	<Elasticsearch name="ELASTICSEARCH">
+	<Elasticsearch name="elasticsearchAsyncBatch">
 		<IndexName indexName="log4j2"/>
 		<AsyncBatchDelivery>
 			<JestHttp serverUris="http://akr-j28.nmfs.local:9200" />
 		</AsyncBatchDelivery>
 	</Elasticsearch>
+
+	<!--
+		more advanced setup.
+	<Elasticsearch name="elasticsearchAsyncBatch">
+		<JsonLayout compact="true" />
+		<IndexName indexName="log4j2_testing"/>
+		<AsyncBatchDelivery batchSize="10000" deliveryInterval="1000">
+			<IndexTemplate name="testing_template" path="classpath:indexTemplate.json"/>
+			<ElasticSearchBulkProcessor serverUris="tcp://akr-j28.nmfs.local:9300">
+				<XPackAuth>
+					<BasicCredentials username="admin" password="changeme"/>
+					<PEM 	keypath="${sys:pemCertInfo.keyPath}"
+						keyPassphrase="${sys.pemCertInfo.keyPassphrase}"
+						clientCertPath="${sys:pemCertInfo.clientCertPath}"
+						caPath="${sys:pemCertInfo.caPath}" />
+				</XPackAuth>
+			</ElasticSearchBulkProcessor>
+			<NoopFailoverPolicy/>
+		</AsyncBatchDelivery>
+	</Elasticsearch>
+	
+	<Async name="asyncLogger">
+		<AppenderRef ref="elasticsearchAsyncBatch" />
+	</Async>
+	-->
+
     </Appenders>
+
+
     <Loggers>
-        <Root level="debug">
+        <Root level="info">
             <AppenderRef ref="STDOUT" />
             <AppenderRef ref="FILE" />
-	    <AppenderRef ref="ELASTICSEARCH" />
+	    <AppenderRef ref="elasticsearchAsyncBatch" />
         </Root>
     </Loggers>
+
+	<!--
+		more advanced setup continued.
+	<Loggers>
+		<Logger name="org.elasticsearch.xpack.ssl.SSLService">
+			<AppenderRef ref="CONSOLE"/>
+		</Logger>
+		<Logger name="org.elasticsearch.client.transport.TransportClientNodeService">
+			<AppenderRef ref="CONSOLE"/>
+		</Logger>
+		<AsyncLogger name="elasticsearch" level="debug" additivity="false">
+			<AppenderRef ref="asyncLogger" />
+		</AsyncLogger>
+		<Root level="debug" />
+	</Loggers>
+	-->
 </Configuration>
